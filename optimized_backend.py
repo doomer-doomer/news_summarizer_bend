@@ -57,7 +57,6 @@ async def startup_event():
         google_api_key="AIzaSyDFcr4m2w64aiFpHb6pctxutXNAh8MICeQ",
         search_engine_id="e121a1ca931084c94",
         stream_logger=stream_logger,
-        max_cache_size=50  # Limit cache size for memory efficiency
     )
 
 @app.on_event("shutdown")
