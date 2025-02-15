@@ -820,7 +820,7 @@ class MultiUrlProcessor:
         ###
 
         REQUIREMENTS:
-        - Generate a minimum 500 and maximum 700 words news summary
+        - Generate a minimum 200 and maximum 500 words news summary
         - Include only verified facts and direct quotes
         - Exclude personal opinions, speculation, or analysis
         - Focus on core news elements: what, when, where, who, why
