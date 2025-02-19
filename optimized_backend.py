@@ -76,24 +76,30 @@ async def stream_url_process(request: URLRequest):
     cached_result = await processor.cache.get(cache_key)
     if cached_result:
         async def cached_generator():
+            # Send info about cached result
             yield {
                 "event": "processing",
                 "data": json.dumps({
                     "type": "info",
-                    "message": "Retrieved from cache"
+                    "message": "Retrieved from cache",
+                    "cached": True
                 })
             }
+            # Send the content chunk
             yield {
                 "event": "summary",
                 "data": json.dumps({
                     "type": "chunk",
-                    "content": cached_result['content']
+                    "content": cached_result['content'],
+                    "cached": True
                 })
             }
+            # Signal completion
             yield {
                 "event": "complete",
                 "data": json.dumps({
                     "type": "success",
+                    "content": cached_result['content'],
                     "timestamp": datetime.now().isoformat(),
                     "cached": True
                 })
