@@ -72,34 +72,31 @@ async def stream_url_process(request: URLRequest):
 
     cache_key = hashlib.md5(f"{request.url}:{request.query}".encode()).hexdigest()
     
-    # Check cache
+    # Check cache first
     cached_result = await processor.cache.get(cache_key)
     if cached_result:
         async def cached_generator():
-            # Send info about cached result
+            # Send initial processing event
             yield {
                 "event": "processing",
                 "data": json.dumps({
                     "type": "info",
-                    "message": "Retrieved from cache",
-                    "cached": True
+                    "message": f"Retrieved cached result for URL: {request.url}"
                 })
             }
-            # Send the content chunk
+            # Stream cached content - matching backend.py format
             yield {
                 "event": "summary",
                 "data": json.dumps({
                     "type": "chunk",
-                    "content": cached_result['content'],
-                    "cached": True
+                    "content": cached_result['content']
                 })
             }
-            # Signal completion
+            # Send completion event - matching backend.py format
             yield {
                 "event": "complete",
                 "data": json.dumps({
                     "type": "success",
-                    "content": cached_result['content'],
                     "timestamp": datetime.now().isoformat(),
                     "cached": True
                 })
@@ -111,6 +108,14 @@ async def stream_url_process(request: URLRequest):
 
     async def event_generator():
         try:
+            yield {
+                "event": "processing",
+                "data": json.dumps({
+                    "type": "info",
+                    "message": f"Starting processing for URL: {request.url}"
+                })
+            }
+
             async for chunk in processor.process_single_url_stream(
                 str(request.url), 
                 request.query, 
@@ -125,6 +130,7 @@ async def stream_url_process(request: URLRequest):
                     })
                 }
 
+            # Merge chunks and cache result
             final_content = "".join(chunks)
             await processor.cache.set(cache_key, {
                 "content": final_content,
