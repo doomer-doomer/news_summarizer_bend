@@ -78,28 +78,11 @@ async def stream_url_process(request: URLRequest):
         async def cached_generator():
             # Send initial processing event
             yield {
-                "event": "processing",
-                "data": json.dumps({
-                    "type": "info",
-                    "message": f"Retrieved cached result for URL: {request.url}"
-                })
-            }
-            # Stream cached content - matching backend.py format
-            yield {
                 "event": "summary",
                 "data": json.dumps({
                     "type": "chunk",
                     "content": cached_result['content']
-                })
-            }
-            # Send completion event - matching backend.py format
-            yield {
-                "event": "complete",
-                "data": json.dumps({
-                    "type": "success",
-                    "timestamp": datetime.now().isoformat(),
-                    "cached": True
-                })
+                }, ensure_ascii=False)  # Add JSON encoding with ensure_ascii
             }
         return EventSourceResponse(cached_generator())
 
