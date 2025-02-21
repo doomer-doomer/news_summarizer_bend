@@ -827,7 +827,6 @@ class MultiUrlProcessor:
         - Maintain chronological order of events
         - Include only primary sources and official statements
         - Omit background information unless crucial to understanding
-        - for quotes, use *this is a quote* instead of "this is a quote"
 
         STRUCTURE:
 
