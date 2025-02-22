@@ -81,7 +81,8 @@ async def stream_url_process(request: URLRequest):
                 "event": "summary",
                 "data": json.dumps({
                     "type": "chunk",
-                    "content": cached_result['content']
+                    "content": cached_result['content'],
+                    "cached": True
                 }, ensure_ascii=False)  # Add JSON encoding with ensure_ascii
             }
         return EventSourceResponse(cached_generator())
